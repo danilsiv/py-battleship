@@ -10,26 +10,31 @@ class ShipsValidator:
     @staticmethod
     def _amount_ships_validator(ships: list) -> None:
 
-        amount_of_the_ships = [None, 0, 0, 0, 0]
+        amount_of_the_ships = {
+            "ships with one deck": 0,
+            "ships with two decks": 0,
+            "ships with tree decks": 0,
+            "ships with four decks": 0
+        }
 
         for ship in ships:
             if len(ship.decks) == 1:
-                amount_of_the_ships[4] += 1
+                amount_of_the_ships["ships with one deck"] += 1
             elif len(ship.decks) == 2:
-                amount_of_the_ships[3] += 1
+                amount_of_the_ships["ships with two decks"] += 1
             elif len(ship.decks) == 3:
-                amount_of_the_ships[2] += 1
+                amount_of_the_ships["ships with tree decks"] += 1
             elif len(ship.decks) == 4:
-                amount_of_the_ships[1] += 1
+                amount_of_the_ships["ships with four decks"] += 1
             else:
                 raise ValueError("The ship is too big!")
 
         amount_of_the_decks = 4
-        for i in range(1, 5):
-            if amount_of_the_ships[i] != i:
-                raise ValueError(f"There should be {i} ships "
-                                 f"with {amount_of_the_decks} decks")
-            amount_of_the_decks -= i
+        for ship, amount in amount_of_the_ships.items():
+            if amount != amount_of_the_decks:
+                raise ValueError(f"There should be {amount_of_the_decks} "
+                                 f"{ship}")
+            amount_of_the_decks -= 1
 
     @staticmethod
     def _distance_between_ships_validator(value: list) -> None:
@@ -115,7 +120,7 @@ class Battleship:
     ships = ShipsValidator()
 
     def __init__(self, ships: list[tuple]) -> None:
-        self.ships = [Ship(ship[0], ship[1]) for ship in ships]
+        self.ships = [Ship(*ship) for ship in ships]
         self.field = {tuple((deck.row, deck.column)
                       for deck in ship.decks): ship
                       for ship in self.ships}
@@ -123,6 +128,5 @@ class Battleship:
     def fire(self, location: tuple) -> str:
         for coordinates, ship in self.field.items():
             if location in coordinates:
-                result = ship.fire(location[0], location[1])
-                return result
+                return ship.fire(*location)
         return "Miss!"
