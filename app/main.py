@@ -2,10 +2,10 @@ class ShipsValidator:
     def __get__(self, instance: object, owner: object) -> list:
         return instance._ships
 
-    def __set__(self, instance: object, value: list) -> None:
-        self._amount_ships_validator(value)
-        self._distance_between_ships_validator(value)
-        instance._ships = value
+    def __set__(self, instance: object, ships: list) -> None:
+        self._amount_ships_validator(ships)
+        self._distance_between_ships_validator(ships)
+        instance._ships = ships
 
     @staticmethod
     def _amount_ships_validator(ships: list) -> None:
